@@ -2,7 +2,7 @@
 <html lang="en" data-type="service">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#eed8b7">
   <meta name="page-type" content="service">
   <meta name="site-kind" content="other">
@@ -13,9 +13,9 @@
   <meta property="og:image" content="https://hfzhou431-bot.github.io/assets/letters-from-the-revolution.jpg">
   <meta property="og:type" content="website">
   <link rel="icon" href="/assets/mark.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="/style.css?v=ca3fc9e7753d">
+  <link rel="stylesheet" href="/style.css?v=8ccb7bf1246c">
 
-  <script defer src="/interaction/video.js"></script>
+  <script defer src="/interaction/video.js?v=b6227aeb29c5"></script>
 
 
 </head>
@@ -60,11 +60,15 @@
 
           <div class="film-player" style="--film-ratio: 1280 / 720">
             <div class="screening-cloth" aria-hidden="true"></div>
-            <video crossorigin="anonymous" controls muted playsinline preload="none" poster="/assets/letters-from-the-revolution.jpg" aria-label="Letters from the Revolution">
-              <source src="https://raw.githubusercontent.com/hfzhou431-bot/hfzhou431-bot.github.io/8761317e3b15f727140305c88b4f95d64e72119e/assets/letters-from-the-revolution.mp4" type="video/mp4">
-              <a href="https://raw.githubusercontent.com/hfzhou431-bot/hfzhou431-bot.github.io/8761317e3b15f727140305c88b4f95d64e72119e/assets/letters-from-the-revolution.mp4">Open the video</a>
+            <video controls muted playsinline webkit-playsinline preload="none" poster="/assets/letters-from-the-revolution.jpg" aria-label="Letters from the Revolution">
+              <source src="/assets/letters-from-the-revolution.mp4" type="video/mp4">
+              <a href="/assets/letters-from-the-revolution.mp4">Open the video</a>
             </video>
+            <button class="screening-start" type="button" data-start-film aria-label="Play video" hidden>▶</button>
           </div>
+          <p class="micro screening-status" data-film-status role="status" hidden>
+            <span></span> <a class="text-link" href="/assets/letters-from-the-revolution.mp4" hidden>Open the video ↗</a>
+          </p>
           <div class="screening-actions" hidden>
             <div class="screening-transport" hidden>
               <button class="micro" type="button" data-play-film>Play</button>
@@ -91,7 +95,7 @@
         <h2 id="next-work"><a href="/work/after-the-spring-equinox/">After the Spring Equinox <span class="arrow" aria-hidden="true">↗</span></a></h2>
       </section></main>
   <footer class="wrap footer">
-    <span class="micro">Fangzhou He</span>
+    <span class="micro">© 2026 HE FANGZHOU</span>
     <a class="micro footer-link footer-email" href="mailto:hfzhou431@gmail.com">hfzhou431@gmail.com</a>
     <a class="micro footer-link" href="#top">Back to top <span aria-hidden="true">↑</span></a>
   </footer>
