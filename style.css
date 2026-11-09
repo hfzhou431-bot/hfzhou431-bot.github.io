@@ -58,7 +58,8 @@ main[tabindex="-1"]:focus { outline: none; }
 .route-layer--outgoing nav a[aria-current="page"] .nav-underline path { animation: nav-retract 400ms ease-out both; }
 @keyframes nav-draw { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
 @keyframes nav-retract { from { stroke-dashoffset: 0; } to { stroke-dashoffset: 1; } }
-.arrow { display: inline-block; font-family: var(--sans); font-weight: 400; transition: transform .3s var(--ease); }
+.arrow { display: inline-block; vertical-align: -.1em; transition: transform .3s var(--ease); }
+.arrow svg { display: block; width: 1em; height: 1em; }
 a:hover .arrow, a:focus-visible .arrow { transform: translate(3px,-3px); }
 [data-route-view="work"], [data-route-view="other"] {
   --work-collapse-ease: 500ms cubic-bezier(.22, 1, .36, 1);
@@ -126,7 +127,6 @@ h1 { font-size: clamp(4.9rem, 11vw, 11.6rem); line-height: .93; letter-spacing: 
 .work-strip:hover img, .work-strip:focus-visible img { transform: scale(1.035); filter: saturate(.96); }
 .strip-inner {
   --strip-gap: clamp(10px, 2.5vw, 22px);
-  --strip-arrow-size: 48px;
   display: flex; justify-content: space-between; align-items: center; gap: var(--strip-gap); padding-block: 32px;
   container-type: inline-size;
 }
@@ -139,7 +139,7 @@ h1 { font-size: clamp(4.9rem, 11vw, 11.6rem); line-height: .93; letter-spacing: 
 .strip-project { flex: 1; min-width: 0; }
 .strip-project-meta { margin-top: 8px; text-transform: none; }
 .strip-end { flex: none; }
-.strip-end .arrow { display: grid; place-items: center; width: var(--strip-arrow-size); height: var(--strip-arrow-size); border: 1px solid #ffecd09e; border-radius: 50%; font-size: 1.3rem; }
+.strip-end .arrow { display: grid; place-items: center; width: 48px; height: 48px; border: 1px solid #ffecd09e; border-radius: 50%; font-size: 1.3rem; }
 .work-strip:hover .arrow, .work-strip:focus-visible .arrow { background: var(--light); color: var(--ink); }
 .closing { padding-block: clamp(24px, 4vw, 56px); }
 .closing .kicker { font-size: .67rem; }
@@ -185,26 +185,12 @@ h1 { font-size: clamp(4.9rem, 11vw, 11.6rem); line-height: .93; letter-spacing: 
 .film { width: min(calc((100% - 2 * var(--edge)) * .88), 1267px); margin-block: clamp(38px, 6vw, 90px); }
 .film h2 { font-size: clamp(2rem, 5vw, 4rem); letter-spacing: -.045em; }
 .film p { margin-top: 7px; }
+.film-note { font-size: .875rem; opacity: .8; }
 .film-player, .film-placeholder { margin-top: 20px; }
 .film-player { position: relative; aspect-ratio: var(--film-ratio); }
 .film video { width: 100%; height: 100%; object-fit: contain; background: #241512; }
 .film-player video, .screening-stage video, .screening-cloth, .screening-cloth canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
 .screening-cloth { pointer-events: none; --surface: var(--paper); --text: var(--ink); }
-.screening-start:not([hidden]) {
-  position: absolute;
-  inset: 50% auto auto 50%;
-  transform: translate(-50%, -50%);
-  display: grid;
-  place-items: center;
-  width: 48px;
-  height: 48px;
-  border: 1px solid var(--light);
-  border-radius: 50%;
-  background: #241512e6;
-  color: var(--light);
-  font: 1rem var(--sans);
-  cursor: pointer;
-}
 .screening-status { text-transform: none; }
 .screening-status a { text-decoration: underline; text-underline-offset: .2em; }
 .film-player[data-cloth] video { opacity: 0; pointer-events: none; }
@@ -217,6 +203,9 @@ h1 { font-size: clamp(4.9rem, 11vw, 11.6rem); line-height: .93; letter-spacing: 
 .screening-actions input { min-width: 0; margin: 0; accent-color: var(--ink); cursor: pointer; }
 [data-film-progress] { flex: 1; width: 100%; }
 [data-film-volume] { width: clamp(42px, 7vw, 88px); }
+@media (pointer: coarse), (hover: none) {
+  .screening-actions [data-film-volume] { display: none; }
+}
 .screening-time { font: .75rem var(--sans); font-variant-numeric: tabular-nums; }
 .film-dialog {
   width: min(94vw, 1220px);
@@ -324,12 +313,13 @@ html:has(.film-dialog[open]) { overflow: hidden; }
   background: none;
   color: inherit;
   cursor: pointer;
+  touch-action: pinch-zoom;
 }
 .cover-image-surface { position: absolute; inset: 0; filter: brightness(.16); }
 .cover-image-surface img { width: 100%; height: 100%; object-fit: contain; pointer-events: none; }
-.cover-deformation { position: absolute; inset: 0; width: 100%; height: 100%; visibility: hidden; pointer-events: none; }
-.cover-image-surface[data-deforming] .cover-deformation { visibility: visible; }
-.cover-image-surface[data-deforming] img { opacity: 0; }
+.cover-image-surface canvas { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; visibility: hidden; }
+.cover-image-surface[data-cover-warp] canvas { visibility: visible; }
+.cover-image-surface[data-cover-warp] img { opacity: 0; }
 .cover-title {
   position: absolute;
   z-index: 1;
@@ -350,10 +340,13 @@ html:has(.film-dialog[open]) { overflow: hidden; }
 html:has([data-route-view]:not([data-route-view=""])) { overscroll-behavior-y: none; }
 html.route-turning { overflow: hidden; }
 .route-layer { position: fixed; inset: 0; overflow: clip; background: var(--paper); pointer-events: none; }
-.route-layer { z-index: 10; will-change: transform; }
-.route-layer--outgoing { z-index: 9; }
+.route-layer { z-index: 10; }
+.route-layer--outgoing { z-index: 9; will-change: transform, opacity; }
 .route-layer > .route-document { position: absolute; inset-inline: 0; }
 .route-layer [data-enter] { animation: none; }
+.route-turning :is(.work-intro, .work-intro h1, .intro-details, .work-intro .lede) { transition: none; }
+.route-layer--liquid .site-header { visibility: hidden; }
+.liquid-reveal { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 19; pointer-events: none; }
 [data-enter] { animation: enter .64s var(--ease) both; }
 @keyframes enter { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
 
@@ -362,7 +355,6 @@ html.route-turning { overflow: hidden; }
   .header-inner { grid-template-columns: 1fr auto; gap: 16px; }
   .desktop-break { display: none; }
   .work-gallery { --gallery-edge: 18px; }
-  .strip-inner { --strip-arrow-size: 39px; }
   .film { width: min(calc(100% - 2 * var(--edge)), 1267px); }
   .detail-intro .detail-title--bilingual.detail-title--cinematic,
   .closing h2.next-title--cinematic { white-space: normal; }
